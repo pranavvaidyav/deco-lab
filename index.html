@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HALF ADDER - Interactive Digital Logic Simulator | DECO Mini Project</title>
+    <!-- Google Fonts for crisp typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           HALF ADDER SIMULATOR - MODERN GLASSMORPHISM STYLESHEET
+           ========================================================================== */
+
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: rgba(18, 26, 43, 0.75);
+            --bg-card-hover: rgba(26, 38, 64, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 242, 254, 0.4);
+            
+            --primary-cyan: #00f2fe;
+            --primary-blue: #4facfe;
+            --accent-glow: rgba(0, 242, 254, 0.25);
+            
+            --high-color: #00ff88;
+            --high-glow: rgba(0, 255, 136, 0.4);
+            --low-color: #4b5563;
+            --low-wire: #1f293d;
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(79, 172, 254, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 242, 254, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-title .highlight {
+            color: var(--primary-cyan);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: var(--transition-fast);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-cyan);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 150px 24px 80px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sub-badge {
+            color: var(--primary-cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 12px 0;
+            line-height: 1.2;
+            background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-normal);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            color: #050b14;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-small {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-small:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            color: #ff4d4d;
+            border-color: rgba(255, 77, 77, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 77, 77, 0.1);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* SECTIONS & PANELS */
+        .section {
+            padding: 70px 0;
+        }
+
+        .dark-bg {
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .panel h3 {
+            font-size: 1.25rem;
+            margin-bottom: 6px;
+        }
+
+        .panel-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 20px 0;
+        }
+
+        /* SIMULATOR GRID */
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-toggles {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .btn-group {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-toggle {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-toggle.active {
+            background: var(--primary-cyan);
+            color: #000;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .control-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .speed-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+
+        .speed-control select {
+            background: #0f172a;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .step-mode-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .step-toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .btn-toggle-sm {
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .btn-toggle-sm.active {
+            background: var(--high-color);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .case-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition-fast);
+            color: var(--text-main);
+        }
+
+        .case-card span {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .case-card strong {
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .case-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .case-card.active {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        /* CIRCUIT PANEL & SVG */
+        .circuit-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .circuit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        .status-dot.idle { background: #eab308; box-shadow: 0 0 8px #eab308; }
+        .status-dot.simulating { background: var(--primary-cyan); box-shadow: 0 0 8px var(--primary-cyan); }
+        .status-dot.complete { background: var(--high-color); box-shadow: 0 0 8px var(--high-color); }
+
+        .circuit-container {
+            flex: 1;
+            background: rgba(5, 10, 20, 0.6);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        #circuit-svg {
+            width: 100%;
+            height: auto;
+            max-height: 380px;
+        }
+
+        .wire {
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .wire-inactive { stroke: var(--low-wire); }
+        .wire-active { stroke: var(--high-color); filter: drop-shadow(0 0 4px var(--high-glow)); }
+
+        .junction { fill: var(--low-wire); }
+        .junction.active { fill: var(--high-color); }
+
+        .node-box {
+            fill: #0f172a;
+            stroke: var(--border-color);
+            stroke-width: 2;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .node-box:hover { stroke: var(--primary-cyan); }
+        .node-box.active { stroke: var(--high-color); fill: rgba(0, 255, 136, 0.1); }
+
+        .node-text {
+            fill: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .gate-body {
+            fill: #1e293b;
+            stroke: var(--border-color);
+            stroke-width: 2;
+            transition: var(--transition-fast);
+        }
+
+        .gate-group.active .gate-body {
+            stroke: var(--primary-cyan);
+            fill: rgba(0, 242, 254, 0.08);
+            filter: drop-shadow(0 0 6px var(--accent-glow));
+        }
+
+        .gate-text {
+            fill: var(--text-muted);
+            font-weight: 700;
+            font-size: 13px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .pulse-particle {
+            fill: var(--primary-cyan);
+            opacity: 0;
+            filter: drop-shadow(0 0 6px var(--primary-cyan));
+        }
+
+        /* OUTPUT PANEL */
+        .output-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .output-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .output-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-dim);
+            margin: 4px 0;
+            transition: var(--transition-fast);
+        }
+
+        .output-value.high {
+            color: var(--high-color);
+            text-shadow: 0 0 15px var(--high-glow);
+        }
+
+        .output-formula {
+            font-size: 0.75rem;
+            color: var(--primary-cyan);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .eval-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        .eval-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .eval-row:last-child { margin-bottom: 0; }
+        .eval-row span { color: var(--text-muted); }
+        .eval-row strong { font-family: 'Fira Code', monospace; color: var(--primary-cyan); }
+
+        /* TRUTH TABLE & DEMO STEPS */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .table-responsive { overflow-x: auto; }
+
+        .truth-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .truth-table th, .truth-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .truth-table th {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .truth-table tbody tr {
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .truth-table tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+        .truth-table tbody tr.active-row {
+            background: rgba(0, 242, 254, 0.12);
+            outline: 1px solid var(--primary-cyan);
+        }
+        .truth-table tbody tr.active-row td { color: var(--primary-cyan); font-weight: 700; }
+
+        .steps-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 3px solid var(--border-color);
+            transition: var(--transition-fast);
+        }
+
+        .step-item.active {
+            border-left-color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .step-item.active .step-num {
+            background: var(--primary-cyan);
+            color: #000;
+        }
+
+        .step-content strong { display: block; font-size: 0.85rem; }
+        .step-content p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* THEORY & ABOUT SECTIONS */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .theory-card ul {
+            margin: 12px 0 16px 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .note-box {
+            background: rgba(234, 179, 8, 0.1);
+            border-left: 3px solid #eab308;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .gate-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .gate-tag {
+            font-size: 0.7rem;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--primary-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+
+        .formula-box {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            color: var(--high-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 14px;
+        }
+
+        .truth-mini {
+            margin-top: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .info-item span { color: var(--text-muted); }
+        .placeholder { color: var(--primary-cyan); }
+
+        .tech-list {
+            margin: 14px 0 20px 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .offline-note {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: var(--high-color);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        @media (max-width: 1024px) {
+            .simulator-grid, .theory-grid, .details-grid, .about-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .hero { padding-top: 110px; }
+            .hero-actions, .cases-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="badge">DECO MINI PROJECT</span>
+                <span class="logo-title">HALF ADDER <span class="highlight">SIMULATOR</span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">HOME</a></li>
+                <li><a href="#simulator">SIMULATOR</a></li>
+                <li><a href="#truth-table">TRUTH TABLE</a></li>
+                <li><a href="#theory">THEORY</a></li>
+                <li><a href="#about">ABOUT</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <span class="sub-badge">Digital Electronics & Communication</span>
+            <h1>HALF ADDER INTERACTIVE SIMULATOR</h1>
+            <p class="subtitle">Learn, Visualize, and Simulate Binary Addition</p>
+            <p class="description">
+                Explore how a Half Adder performs 1-bit binary addition using <strong>XOR</strong> and <strong>AND</strong> logic gates with real-time signal path tracing and interactive step-by-step logic propagation.
+            </p>
+            <div class="hero-actions">
+                <a href="#simulator" class="btn btn-primary">START SIMULATION</a>
+                <a href="#theory" class="btn btn-secondary">EXPLORE THEORY</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN SIMULATOR SECTION -->
+    <section id="simulator" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Interactive Logic Circuit Simulator</h2>
+                <p>Toggle binary inputs A and B to observe real-time gate responses and output states.</p>
+            </div>
+
+            <div class="simulator-grid">
+                
+                <!-- LEFT PANEL: CONTROLS & CASES -->
+                <div class="panel control-panel">
+                    <h3>Input Controls</h3>
+                    <p class="panel-desc">Set binary inputs or select test cases:</p>
+                    
+                    <div class="input-toggles">
+                        <div class="toggle-group">
+                            <label>Input A:</label>
+                            <div class="btn-group">
+                                <button class="btn-toggle active" id="btn-a-0" onclick="setInputA(0)">0</button>
+                                <button class="btn-toggle" id="btn-a-1" onclick="setInputA(1)">1</button>
+                            </div>
+                        </div>
+
+                        <div class="toggle-group">
+                            <label>Input B:</label>
+                            <div class="btn-group">
+                                <button class="btn-toggle active" id="btn-b-0" onclick="setInputB(0)">0</button>
+                                <button class="btn-toggle" id="btn-b-1" onclick="setInputB(1)">1</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <h4>Simulation Controls</h4>
+                    <div class="control-actions">
+                        <button class="btn btn-small" id="btn-pause" onclick="togglePause()">Pause Animation</button>
+                        <button class="btn btn-small btn-danger" onclick="resetSimulation()">Reset</button>
+                    </div>
+
+                    <div class="speed-control">
+                        <label for="speed-select">Transmission Speed:</label>
+                        <select id="speed-select" onchange="changeSpeed(this.value)">
+                            <option value="1.5">Slow</option>
+                            <option value="1" selected>Normal</option>
+                            <option value="0.5">Fast</option>
+                        </select>
+                    </div>
+
+                    <div class="step-mode-box">
+                        <div class="step-toggle-header">
+                            <span>Step Mode:</span>
+                            <button class="btn-toggle-sm" id="btn-step-mode" onclick="toggleStepMode()">OFF</button>
+                        </div>
+                        <button class="btn btn-primary btn-block" id="btn-next-step" onclick="nextStep()" disabled>NEXT STEP</button>
+                    </div>
+
+                    <hr class="divider">
+
+                    <h4>Input Cases</h4>
+                    <div class="cases-grid">
+                        <button class="case-card active" id="case-00" onclick="loadCase(0,0)">
+                            <span>Case 1</span>
+                            <strong>A=0, B=0</strong>
+                        </button>
+                        <button class="case-card" id="case-01" onclick="loadCase(0,1)">
+                            <span>Case 2</span>
+                            <strong>A=0, B=1</strong>
+                        </button>
+                        <button class="case-card" id="case-10" onclick="loadCase(1,0)">
+                            <span>Case 3</span>
+                            <strong>A=1, B=0</strong>
+                        </button>
+                        <button class="case-card" id="case-11" onclick="loadCase(1,1)">
+                            <span>Case 4</span>
+                            <strong>A=1, B=1</strong>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CENTER PANEL: SVG CIRCUIT VISUALIZATION -->
+                <div class="panel circuit-panel">
+                    <div class="circuit-header">
+                        <h3>Digital Circuit Diagram</h3>
+                        <div class="status-indicator">
+                            <span class="status-dot idle" id="status-dot"></span>
+                            <span id="status-text">IDLE</span>
+                        </div>
+                    </div>
+
+                    <div class="circuit-container">
+                        <svg viewBox="0 0 750 420" id="circuit-svg" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#grid)" />
+
+                            <!-- INPUT A PATHS -->
+                            <path class="wire wire-inactive" id="wire-a-xor" d="M 80,110 L 320,110" />
+                            <path class="wire wire-inactive" id="wire-a-and" d="M 180,110 L 180,270 L 320,270" />
+
+                            <!-- INPUT B PATHS -->
+                            <path class="wire wire-inactive" id="wire-b-xor" d="M 80,170 L 320,170" />
+                            <path class="wire wire-inactive" id="wire-b-and" d="M 220,170 L 220,330 L 320,330" />
+
+                            <!-- OUTPUT PATHS -->
+                            <path class="wire wire-inactive" id="wire-sum" d="M 440,140 L 630,140" />
+                            <path class="wire wire-inactive" id="wire-carry" d="M 440,300 L 630,300" />
+
+                            <!-- JUNCTION DOTS -->
+                            <circle cx="180" cy="110" r="4" class="junction" id="junc-a" />
+                            <circle cx="220" cy="170" r="4" class="junction" id="junc-b" />
+
+                            <!-- INPUT NODES -->
+                            <g class="node-group" onclick="toggleInputA()">
+                                <rect x="20" y="90" width="60" height="40" rx="8" class="node-box" id="node-box-a" />
+                                <text x="50" y="115" class="node-text" id="node-val-a">A = 0</text>
+                            </g>
+                            
+                            <g class="node-group" onclick="toggleInputB()">
+                                <rect x="20" y="150" width="60" height="40" rx="8" class="node-box" id="node-box-b" />
+                                <text x="50" y="175" class="node-text" id="node-val-b">B = 0</text>
+                            </g>
+
+                            <!-- XOR GATE -->
+                            <g id="gate-xor" class="gate-group">
+                                <path class="gate-body" d="M 320,90 Q 345,140 320,190 Q 370,190 410,140 Q 370,90 320,90 Z" />
+                                <path class="gate-body" d="M 310,90 Q 335,140 310,190" fill="none" stroke-width="4" />
+                                <text x="355" y="145" class="gate-text">XOR</text>
+                            </g>
+
+                            <!-- AND GATE -->
+                            <g id="gate-and" class="gate-group">
+                                <path class="gate-body" d="M 320,250 L 370,250 A 40,40 0 0,1 370,350 L 320,350 Z" />
+                                <text x="350" y="305" class="gate-text">AND</text>
+                            </g>
+
+                            <!-- OUTPUT NODES -->
+                            <g class="node-group">
+                                <rect x="630" y="120" width="100" height="40" rx="8" class="node-box" id="node-box-sum" />
+                                <text x="680" y="145" class="node-text" id="node-val-sum">SUM = 0</text>
+                            </g>
+
+                            <g class="node-group">
+                                <rect x="630" y="280" width="100" height="40" rx="8" class="node-box" id="node-box-carry" />
+                                <text x="680" y="305" class="node-text" id="node-val-carry">CARRY = 0</text>
+                            </g>
+
+                            <!-- ANIMATED PULSE PARTICLES -->
+                            <circle r="5" class="pulse-particle" id="pulse-a-xor" />
+                            <circle r="5" class="pulse-particle" id="pulse-a-and" />
+                            <circle r="5" class="pulse-particle" id="pulse-b-xor" />
+                            <circle r="5" class="pulse-particle" id="pulse-b-and" />
+                            <circle r="5" class="pulse-particle" id="pulse-sum" />
+                            <circle r="5" class="pulse-particle" id="pulse-carry" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL: OUTPUT & LIVE LOGIC STATUS -->
+                <div class="panel output-panel">
+                    <h3>Output Results</h3>
+                    
+                    <div class="output-card">
+                        <div class="output-header">SUM OUTPUT</div>
+                        <div class="output-value" id="disp-sum">0</div>
+                        <div class="output-formula">A ⊕ B (XOR Logic)</div>
+                    </div>
+
+                    <div class="output-card">
+                        <div class="output-header">CARRY OUTPUT</div>
+                        <div class="output-value" id="disp-carry">0</div>
+                        <div class="output-formula">A · B (AND Logic)</div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <h4>Logic Evaluation</h4>
+                    <div class="eval-box">
+                        <div class="eval-row">
+                            <span>Input Combination:</span>
+                            <strong id="eval-input-combo">00<sub>2</sub></strong>
+                        </div>
+                        <div class="eval-row">
+                            <span>Sum Equation:</span>
+                            <strong id="eval-sum-eq">0 ⊕ 0 = 0</strong>
+                        </div>
+                        <div class="eval-row">
+                            <span>Carry Equation:</span>
+                            <strong id="eval-carry-eq">0 · 0 = 0</strong>
+                        </div>
+                        <div class="eval-row">
+                            <span>Decimal Value:</span>
+                            <strong id="eval-dec-val">0 + 0 = 0</strong>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TRUTH TABLE & DEMONSTRATION STEPS GRID -->
+            <div class="details-grid">
+                
+                <!-- TRUTH TABLE SECTION -->
+                <div class="panel" id="truth-table">
+                    <h3>Interactive Truth Table</h3>
+                    <p class="panel-desc">Click any row to instantly simulate that specific binary combination.</p>
+
+                    <div class="table-responsive">
+                        <table class="truth-table">
+                            <thead>
+                                <tr>
+                                    <th>Input A</th>
+                                    <th>Input B</th>
+                                    <th>SUM (A ⊕ B)</th>
+                                    <th>CARRY (A · B)</th>
+                                    <th>Decimal Equivalent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="row-00" onclick="loadCase(0,0)">
+                                    <td>0</td><td>0</td><td>0</td><td>0</td><td>0 + 0 = 0</td>
+                                </tr>
+                                <tr id="row-01" onclick="loadCase(0,1)">
+                                    <td>0</td><td>1</td><td>1</td><td>0</td><td>0 + 1 = 1</td>
+                                </tr>
+                                <tr id="row-10" onclick="loadCase(1,0)">
+                                    <td>1</td><td>0</td><td>1</td><td>0</td><td>1 + 0 = 1</td>
+                                </tr>
+                                <tr id="row-11" onclick="loadCase(1,1)">
+                                    <td>1</td><td>1</td><td>0</td><td>1</td><td>1 + 1 = 2 (Binary 10)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DEMONSTRATION STEPS -->
+                <div class="panel">
+                    <h3>Demonstration Walkthrough</h3>
+                    <p class="panel-desc">Real-time breakdown of signal execution across logic stages.</p>
+
+                    <div class="steps-timeline" id="steps-timeline">
+                        <div class="step-item active" id="step-1">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <strong>Input Initialization</strong>
+                                <p id="step-1-desc">Inputs set to A = 0, B = 0.</p>
+                            </div>
+                        </div>
+                        <div class="step-item" id="step-2">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <strong>Signal Propagation</strong>
+                                <p id="step-2-desc">Signals travel through input wires to gate terminals.</p>
+                            </div>
+                        </div>
+                        <div class="step-item" id="step-3">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <strong>XOR Gate Processing (SUM)</strong>
+                                <p id="step-3-desc">0 XOR 0 yields SUM = 0.</p>
+                            </div>
+                        </div>
+                        <div class="step-item" id="step-4">
+                            <div class="step-num">4</div>
+                            <div class="step-content">
+                                <strong>AND Gate Processing (CARRY)</strong>
+                                <p id="step-4-desc">0 AND 0 yields CARRY = 0.</p>
+                            </div>
+                        </div>
+                        <div class="step-item" id="step-5">
+                            <div class="step-num">5</div>
+                            <div class="step-content">
+                                <strong>Output Stable</strong>
+                                <p id="step-5-desc">Simulation complete. Outputs steady.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- THEORY SECTION -->
+    <section id="theory" class="section dark-bg">
+        <div class="container">
+            <div class="section-header">
+                <h2>Educational Theory & Logic Analysis</h2>
+                <p>Understand the fundamental principles of binary arithmetic and logic gate operations.</p>
+            </div>
+
+            <div class="theory-grid">
+                
+                <div class="panel theory-card">
+                    <h3>What is a Half Adder?</h3>
+                    <p>
+                        A <strong>Half Adder</strong> is a basic combinational logic circuit designed to perform the addition of two single-bit binary numbers ($A$ and $B$). 
+                    </p>
+                    <p>It generates two distinct binary outputs:</p>
+                    <ul>
+                        <li><strong>SUM ($S$):</strong> The least significant bit (LSB) of the addition.</li>
+                        <li><strong>CARRY ($C$):</strong> The most significant bit (MSB), generated when both inputs are HIGH ($1$).</li>
+                    </ul>
+                    <div class="note-box">
+                        <strong>Important Note:</strong> A Half Adder does <em>not</em> accept a Carry-In ($C_{in}$) signal from a previous addition stage.
+                    </div>
+                </div>
+
+                <div class="panel gate-card">
+                    <div class="gate-card-header">
+                        <h3>XOR Gate (Exclusive OR)</h3>
+                        <span class="gate-tag">Generates SUM Output</span>
+                    </div>
+                    <div class="formula-box">SUM = A ⊕ B = A'B + AB'</div>
+                    <p>The XOR gate evaluates to <strong>HIGH (1)</strong> if and only if the two inputs are different from each other.</p>
+                    <div class="truth-mini">
+                        <div>A=0, B=0 → 0</div>
+                        <div>A=0, B=1 → 1</div>
+                        <div>A=1, B=0 → 1</div>
+                        <div>A=1, B=1 → 0</div>
+                    </div>
+                </div>
+
+                <div class="panel gate-card">
+                    <div class="gate-card-header">
+                        <h3>AND Gate</h3>
+                        <span class="gate-tag">Generates CARRY Output</span>
+                    </div>
+                    <div class="formula-box">CARRY = A · B</div>
+                    <p>The AND gate evaluates to <strong>HIGH (1)</strong> only when both inputs $A$ and $B$ are simultaneously <strong>HIGH (1)</strong>.</p>
+                    <div class="truth-mini">
+                        <div>A=0, B=0 → 0</div>
+                        <div>A=0, B=1 → 0</div>
+                        <div>A=1, B=0 → 0</div>
+                        <div>A=1, B=1 → 1</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Project Information</h2>
+                <p>Academic submission details for the Digital Electronics & Communication (DECO) course.</p>
+            </div>
+
+            <div class="about-grid">
+                <div class="panel student-card">
+                    <h3>DECO Mini Project</h3>
+                    <div class="info-list">
+                        <div class="info-item"><span>Project Title:</span><strong>Half Adder Interactive Digital Logic Simulator</strong></div>
+                        <div class="info-item"><span>Subject:</span><strong>Digital Electronics and Communication (DECO)</strong></div>
+                        <div class="info-item"><span>Student Name:</span><strong class="placeholder">[YOUR NAME]</strong></div>
+                        <div class="info-item"><span>Roll No:</span><strong class="placeholder">[YOUR ROLL NUMBER]</strong></div>
+                        <div class="info-item"><span>Class / Div:</span><strong class="placeholder">[YOUR CLASS]</strong></div>
+                        <div class="info-item"><span>Department:</span><strong>Information Technology</strong></div>
+                        <div class="info-item"><span>College:</span><strong class="placeholder">[YOUR COLLEGE NAME]</strong></div>
+                    </div>
+                </div>
+
+                <div class="panel tech-card">
+                    <h3>Technical Stack</h3>
+                    <ul class="tech-list">
+                        <li><strong>HTML5:</strong> Semantic structure & SVG layout integration.</li>
+                        <li><strong>CSS3:</strong> Modern Glassmorphism design, CSS Grid, and custom CSS Variables.</li>
+                        <li><strong>JavaScript (ES6):</strong> Dynamic binary logic evaluation and state management.</li>
+                        <li><strong>SVG Engine:</strong> Vector graphics with animated signal transmission paths.</li>
+                    </ul>
+                    <p class="offline-note">
+                        ✓ 100% Offline Compatible — Operates without backend servers or internet CDNs.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p><strong>Half Adder Interactive Simulator</strong> | DECO Mini Project</p>
+            <p>© 2026 All Rights Reserved • Digital Electronics Academic Project</p>
+        </div>
+    </footer>
+
+    <!-- EMBEDDED JAVASCRIPT ENGINE -->
+    <script>
+        /* ==========================================================================
+           HALF ADDER SIMULATOR - INTERACTIVE LOGIC & ANIMATION ENGINE
+           ========================================================================== */
+
+        let state = {
+            inputA: 0,
+            inputB: 0,
+            sum: 0,
+            carry: 0,
+            isPaused: false,
+            speedMultiplier: 1.0,
+            stepMode: false,
+            currentStep: 1,
+            animating: false
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSimulator();
+        });
+
+        function setInputA(val) {
+            state.inputA = val;
+            syncToggleUI();
+            triggerSimulation();
+        }
+
+        function setInputB(val) {
+            state.inputB = val;
+            syncToggleUI();
+            triggerSimulation();
+        }
+
+        function toggleInputA() {
+            setInputA(state.inputA === 0 ? 1 : 0);
+        }
+
+        function toggleInputB() {
+            setInputB(state.inputB === 0 ? 1 : 0);
+        }
+
+        function loadCase(a, b) {
+            state.inputA = a;
+            state.inputB = b;
+            syncToggleUI();
+            triggerSimulation();
+        }
+
+        function syncToggleUI() {
+            document.getElementById('btn-a-0').classList.toggle('active', state.inputA === 0);
+            document.getElementById('btn-a-1').classList.toggle('active', state.inputA === 1);
+            document.getElementById('btn-b-0').classList.toggle('active', state.inputB === 0);
+            document.getElementById('btn-b-1').classList.toggle('active', state.inputB === 1);
+
+            const combo = `${state.inputA}${state.inputB}`;
+            document.querySelectorAll('.case-card').forEach(card => card.classList.remove('active'));
+            const activeCase = document.getElementById(`case-${combo}`);
+            if (activeCase) activeCase.classList.add('active');
+        }
+
+        function triggerSimulation() {
+            state.sum = state.inputA ^ state.inputB;
+            state.carry = state.inputA & state.inputB;
+
+            setStatus('simulating', 'SIMULATING...');
+
+            if (state.stepMode) {
+                state.currentStep = 1;
+                updateStepUI();
+            } else {
+                animateSignalPropagation(() => {
+                    updateOutputsUI();
+                    setStatus('complete', 'COMPLETE');
+                });
+            }
+        }
+
+        function updateSimulator() {
+            state.sum = state.inputA ^ state.inputB;
+            state.carry = state.inputA & state.inputB;
+            
+            syncToggleUI();
+            updateCircuitWires();
+            updateOutputsUI();
+            updateTruthTableHighlight();
+            setStatus('idle', 'IDLE');
+        }
+
+        function updateCircuitWires() {
+            document.getElementById('node-val-a').textContent = `A = ${state.inputA}`;
+            document.getElementById('node-val-b').textContent = `B = ${state.inputB}`;
+
+            document.getElementById('node-box-a').classList.toggle('active', state.inputA === 1);
+            document.getElementById('node-box-b').classList.toggle('active', state.inputB === 1);
+
+            toggleWireState('wire-a-xor', state.inputA === 1);
+            toggleWireState('wire-a-and', state.inputA === 1);
+            toggleWireState('wire-b-xor', state.inputB === 1);
+            toggleWireState('wire-b-and', state.inputB === 1);
+
+            document.getElementById('junc-a').classList.toggle('active', state.inputA === 1);
+            document.getElementById('junc-b').classList.toggle('active', state.inputB === 1);
+
+            document.getElementById('gate-xor').classList.toggle('active', state.sum === 1);
+            document.getElementById('gate-and').classList.toggle('active', state.carry === 1);
+
+            toggleWireState('wire-sum', state.sum === 1);
+            toggleWireState('wire-carry', state.carry === 1);
+
+            document.getElementById('node-val-sum').textContent = `SUM = ${state.sum}`;
+            document.getElementById('node-val-carry').textContent = `CARRY = ${state.carry}`;
+            document.getElementById('node-box-sum').classList.toggle('active', state.sum === 1);
+            document.getElementById('node-box-carry').classList.toggle('active', state.carry === 1);
+        }
+
+        function toggleWireState(id, isActive) {
+            const wire = document.getElementById(id);
+            if (isActive) {
+                wire.classList.add('wire-active');
+                wire.classList.remove('wire-inactive');
+            } else {
+                wire.classList.remove('wire-active');
+                wire.classList.add('wire-inactive');
+            }
+        }
+
+        function updateOutputsUI() {
+            const sumDisp = document.getElementById('disp-sum');
+            const carryDisp = document.getElementById('disp-carry');
+            
+            sumDisp.textContent = state.sum;
+            carryDisp.textContent = state.carry;
+
+            sumDisp.classList.toggle('high', state.sum === 1);
+            carryDisp.classList.toggle('high', state.carry === 1);
+
+            document.getElementById('eval-input-combo').innerHTML = `${state.inputA}${state.inputB}<sub>2</sub>`;
+            document.getElementById('eval-sum-eq').textContent = `${state.inputA} ⊕ ${state.inputB} = ${state.sum}`;
+            document.getElementById('eval-carry-eq').textContent = `${state.inputA} · ${state.inputB} = ${state.carry}`;
+            
+            const decResult = (state.inputA + state.inputB);
+            document.getElementById('eval-dec-val').textContent = `${state.inputA} + ${state.inputB} = ${decResult}`;
+
+            updateTruthTableHighlight();
+            updateCircuitWires();
+        }
+
+        function updateTruthTableHighlight() {
+            document.querySelectorAll('.truth-table tbody tr').forEach(row => {
+                row.classList.remove('active-row');
+            });
+            const activeRowId = `row-${state.inputA}${state.inputB}`;
+            const activeRow = document.getElementById(activeRowId);
+            if (activeRow) {
+                activeRow.classList.add('active-row');
+            }
+        }
+
+        function animateSignalPropagation(onComplete) {
+            if (state.isPaused) {
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const duration = 600 * state.speedMultiplier;
+            
+            animateParticle('pulse-a-xor', 'wire-a-xor', duration, state.inputA === 1);
+            animateParticle('pulse-a-and', 'wire-a-and', duration, state.inputA === 1);
+            animateParticle('pulse-b-xor', 'wire-b-xor', duration, state.inputB === 1);
+            animateParticle('pulse-b-and', 'wire-b-and', duration, state.inputB === 1);
+
+            setTimeout(() => {
+                animateParticle('pulse-sum', 'wire-sum', duration, state.sum === 1);
+                animateParticle('pulse-carry', 'wire-carry', duration, state.carry === 1);
+
+                setTimeout(() => {
+                    if (onComplete) onComplete();
+                }, duration);
+            }, duration * 0.8);
+        }
+
+        function animateParticle(particleId, pathId, duration, isActive) {
+            if (!isActive) return;
+
+            const particle = document.getElementById(particleId);
+            const path = document.getElementById(pathId);
+            const pathLength = path.getTotalLength();
+
+            let startTime = null;
+            particle.style.opacity = '1';
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = (timestamp - startTime) / duration;
+
+                if (progress < 1) {
+                    const point = path.getPointAtLength(progress * pathLength);
+                    particle.setAttribute('cx', point.x);
+                    particle.setAttribute('cy', point.y);
+                    if (!state.isPaused) {
+                        requestAnimationFrame(step);
+                    }
+                } else {
+                    particle.style.opacity = '0';
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            const btn = document.getElementById('btn-pause');
+            btn.textContent = state.isPaused ? 'Resume Animation' : 'Pause Animation';
+            btn.classList.toggle('btn-primary', state.isPaused);
+        }
+
+        function changeSpeed(val) {
+            state.speedMultiplier = parseFloat(val);
+        }
+
+        function resetSimulation() {
+            state.inputA = 0;
+            state.inputB = 0;
+            state.isPaused = false;
+            state.stepMode = false;
+            state.currentStep = 1;
+
+            document.getElementById('btn-pause').textContent = 'Pause Animation';
+            document.getElementById('btn-step-mode').textContent = 'OFF';
+            document.getElementById('btn-step-mode').classList.remove('active');
+            document.getElementById('btn-next-step').disabled = true;
+
+            updateSimulator();
+            updateStepUI();
+        }
+
+        function toggleStepMode() {
+            state.stepMode = !state.stepMode;
+            const btn = document.getElementById('btn-step-mode');
+            const nextBtn = document.getElementById('btn-next-step');
+
+            if (state.stepMode) {
+                btn.textContent = 'ON';
+                btn.classList.add('active');
+                nextBtn.disabled = false;
+                state.currentStep = 1;
+                updateStepUI();
+            } else {
+                btn.textContent = 'OFF';
+                btn.classList.remove('active');
+                nextBtn.disabled = true;
+                updateSimulator();
+            }
+        }
+
+        function nextStep() {
+            if (!state.stepMode) return;
+            if (state.currentStep < 5) {
+                state.currentStep++;
+            } else {
+                state.currentStep = 1;
+            }
+            updateStepUI();
+        }
+
+        function updateStepUI() {
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                item.classList.toggle('active', (index + 1) === state.currentStep);
+            });
+
+            document.getElementById('step-1-desc').textContent = `Inputs initialized: Input A = ${state.inputA}, Input B = ${state.inputB}.`;
+            document.getElementById('step-2-desc').textContent = `Signals travelling over copper paths to gate input terminals.`;
+            document.getElementById('step-3-desc').textContent = `XOR Gate evaluating ${state.inputA} ⊕ ${state.inputB} = ${state.sum} (SUM Bit).`;
+            document.getElementById('step-4-desc').textContent = `AND Gate evaluating ${state.inputA} · ${state.inputB} = ${state.carry} (CARRY Bit).`;
+            document.getElementById('step-5-desc').textContent = `Outputs stabilized at SUM = ${state.sum}, CARRY = ${state.carry}.`;
+
+            if (state.currentStep === 1) {
+                setStatus('simulating', 'STEP 1: INPUTS SET');
+            } else if (state.currentStep === 2) {
+                setStatus('simulating', 'STEP 2: PROPAGATING');
+                animateSignalPropagation();
+            } else if (state.currentStep === 3) {
+                setStatus('simulating', 'STEP 3: XOR EVALUATION');
+            } else if (state.currentStep === 4) {
+                setStatus('simulating', 'STEP 4: AND EVALUATION');
+            } else if (state.currentStep === 5) {
+                updateOutputsUI();
+                setStatus('complete', 'STEP 5: COMPLETE');
+            }
+        }
+
+        function setStatus(type, text) {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-text');
+
+            dot.className = `status-dot ${type}`;
+            label.textContent = text;
+        }
+    </script>
+</body>
+</html>
